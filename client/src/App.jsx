@@ -11,7 +11,7 @@ export default function App() {
     event.preventDefault();
     setError('');
     try {
-      setUser(await login(username, password));
+      setUser(await login(username.trim(), password.trim()));
     } catch (err) {
       if (!err.response) setError('Could not reach the server');
       else setError(err.response.data?.error || `Login failed (HTTP ${err.response.status})`);
