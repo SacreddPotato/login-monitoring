@@ -2,6 +2,7 @@ import { fileURLToPath } from 'node:url';
 import bcrypt from 'bcryptjs';
 import express from 'express';
 import mongoose from 'mongoose';
+import morgan from 'morgan';
 import { connectWithRetry, isConnected } from './db.js';
 import { User } from './models/User.js';
 
@@ -11,6 +12,7 @@ const CLIENT_DIST = fileURLToPath(new URL('../../client/dist', import.meta.url))
 connectWithRetry();
 
 const app = express();
+app.use(morgan('dev'));
 app.use(express.json());
 
 function requireDb(req, res, next) {
@@ -36,11 +38,9 @@ app.post('/api/login', requireDb, async (req, res) => {
 
   const user = await User.findOne({ username });
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
-    console.log(`Failed login for ${JSON.stringify(username)}`);
     return res.status(401).json({ error: 'Invalid username or password' });
   }
 
-  console.log(`Successful login for ${JSON.stringify(username)}`);
   res.json({ username: user.username });
 });
 
