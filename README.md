@@ -75,13 +75,3 @@ npm start          # http://localhost:3000
 |--------------------|--------------|
 | `POST /api/login`  | Body `{ "username": "...", "password": "..." }`. Returns `{ "username": "..." }` when the credentials match, 401 when they don't. |
 | `GET /api/health`  | 200 when MongoDB answers a ping, 503 when it doesn't. |
-
-## Behaviour worth knowing for the demos
-
-- **No sessions or cookies.** A login only checks the credentials against MongoDB, and
-  refreshing the page shows the login form again. The server keeps no state, so several
-  copies can run behind a load balancer.
-- **The server starts even when MongoDB is down.** It retries every 5 seconds and logs each
-  attempt; until it connects, `/api/health` and the login API return 503. That makes
-  `/api/health` usable as a readiness check.
-- Passwords are stored as bcrypt hashes, never in plain text.
